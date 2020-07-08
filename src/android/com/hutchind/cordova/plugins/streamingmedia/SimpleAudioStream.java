@@ -18,9 +18,9 @@ import android.widget.RelativeLayout;
 import android.widget.MediaController;
 
 public class SimpleAudioStream extends Activity implements
-		MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener,
-		MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener,
-		MediaController.MediaPlayerControl {
+MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener,
+MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener,
+MediaController.MediaPlayerControl {
 
 	private String TAG = getClass().getSimpleName();
 	private MediaPlayer mMediaPlayer = null;
@@ -39,8 +39,7 @@ public class SimpleAudioStream extends Activity implements
 		String backgroundColor = b.getString("bgColor");
 		String backgroundImagePath = b.getString("bgImage");
 		String backgroundImageScale = b.getString("bgImageScale");
-		mShouldAutoClose = b.getBoolean("shouldAutoClose");
-		mShouldAutoClose = mShouldAutoClose == null ? true : mShouldAutoClose;
+		mShouldAutoClose = b.getBoolean("shouldAutoClose", true);
 		backgroundImageScale = backgroundImageScale == null ? "center" : backgroundImageScale.toLowerCase();
 		ImageView.ScaleType bgImageScaleType;
 		// Default background to black
@@ -75,6 +74,14 @@ public class SimpleAudioStream extends Activity implements
 		audioView.addView(mMediaControllerView);
 		setContentView(audioView, relLayoutParam);
 
+
+		// stop the screen from going to sleep. keepawake parameter from javascript. default is true.
+		mMediaControllerView.setKeepScreenOn(true);
+		Boolean keepAwake = b.getBoolean("keepAwake", true);
+		if (keepAwake == false) {
+			mMediaControllerView.setKeepScreenOn(false);
+		} 
+
 		play();
 	}
 
@@ -97,6 +104,7 @@ public class SimpleAudioStream extends Activity implements
 			mMediaPlayer.setOnCompletionListener(this);
 			mMediaPlayer.setOnBufferingUpdateListener(this);
 			mMediaPlayer.setOnErrorListener(this);
+			mMediaPlayer.setScreenOnWhilePlaying(true);
 			mMediaController = new MediaController(this);
 
 			mMediaPlayer.prepareAsync();
@@ -228,18 +236,18 @@ public class SimpleAudioStream extends Activity implements
 		sb.append("Media Player Error: ");
 		switch (what) {
 			case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-				sb.append("Not Valid for Progressive Playback");
-				break;
+			sb.append("Not Valid for Progressive Playback");
+			break;
 			case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-				sb.append("Server Died");
-				break;
+			sb.append("Server Died");
+			break;
 			case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-				sb.append("Unknown");
-				break;
+			sb.append("Unknown");
+			break;
 			default:
-				sb.append(" Non standard (");
-				sb.append(what);
-				sb.append(")");
+			sb.append(" Non standard (");
+			sb.append(what);
+			sb.append(")");
 		}
 		sb.append(" (" + what + ") ");
 		sb.append(extra);
@@ -263,21 +271,10 @@ public class SimpleAudioStream extends Activity implements
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
-		mMediaController.hide();
-		try {
-			mMediaPlayer.stop();
-			mMediaPlayer.reset();
-			mMediaPlayer.release();
-		} catch(Exception e) {
-			Log.e(TAG, e.toString());
-		}
-	}
-
-	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+	if (mMediaController != null) {
 		mMediaController.show();
-		return false;
+	}
+	return false;
 	}
 }

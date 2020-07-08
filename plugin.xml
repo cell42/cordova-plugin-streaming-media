@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-		xmlns="http://apache.org/cordova/ns/plugins/1.0"
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		id="cordova-plugin-streaming-media"
-		version="0.1.4">
+	xmlns="http://apache.org/cordova/ns/plugins/1.0"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	id="cordova-plugin-streaming-media"
+	version="2.3.0">
 
 	<name>StreamingMedia</name>
 
@@ -36,8 +36,18 @@
 				<param name="ios-package" value="StreamingMedia" />
 			</feature>
 		</config-file>
+		<config-file target="*-Info.plist" parent="UIBackgroundModes">
+			<array>
+				<string>audio</string>
+				<string>fetch</string>
+			</array>
+		</config-file>
 		<header-file src="src/ios/StreamingMedia.h" />
 		<source-file src="src/ios/StreamingMedia.m" />
+		<header-file src="src/ios/LandscapeVideo.h" />
+		<source-file src="src/ios/LandscapeVideo.m" />
+		<header-file src="src/ios/PortraitVideo.h" />
+		<source-file src="src/ios/PortraitVideo.m" />
 		<framework src="MediaPlayer.framework" />
 	</platform>
 
@@ -61,6 +71,13 @@
 		<source-file src="src/android/com/hutchind/cordova/plugins/streamingmedia/ImageLoadTask.java" target-dir="src/com/hutchind/cordova/plugins/streamingmedia" />
 	</platform>
 
+	<!-- windows -->
+	<platform name="windows">
+			<js-module src="src/windows/StreamingMediaProxy.js" name="StreamingMediaProxy">
+					<merges target="" />
+			</js-module>
+	</platform>
+
 	<platform name="amazon-fireos">
 		<config-file target="res/xml/config.xml" parent="/*">
 			<feature name="StreamingMedia">
@@ -79,10 +96,4 @@
 		<source-file src="src/android/com/hutchind/cordova/plugins/streamingmedia/StreamingMedia.java" target-dir="src/com/hutchind/cordova/plugins/streamingmedia" />
 		<source-file src="src/android/com/hutchind/cordova/plugins/streamingmedia/ImageLoadTask.java" target-dir="src/com/hutchind/cordova/plugins/streamingmedia" />
 	</platform>
-
-	<platform name="windows">
-        <js-module src="src/windows/StreamingMediaProxy.js" name="StreamingMediaProxy">
-            <merges target="" />
-        </js-module>
-    </platform>
 </plugin>

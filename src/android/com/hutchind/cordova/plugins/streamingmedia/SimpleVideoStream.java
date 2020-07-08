@@ -22,8 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 public class SimpleVideoStream extends Activity implements
-	MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener,
-	MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
+MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener,
+MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 	private String TAG = getClass().getSimpleName();
 	private VideoView mVideoView = null;
 	private MediaPlayer mMediaPlayer = null;
@@ -41,8 +41,7 @@ public class SimpleVideoStream extends Activity implements
 
 		Bundle b = getIntent().getExtras();
 		mVideoUrl = b.getString("mediaUrl");
-		mShouldAutoClose = b.getBoolean("shouldAutoClose");
-		mShouldAutoClose = mShouldAutoClose == null ? true : mShouldAutoClose;
+		mShouldAutoClose = b.getBoolean("shouldAutoClose", true);
 		mControls = b.getBoolean("controls", true);
 
 		RelativeLayout relLayout = new RelativeLayout(this);
@@ -137,10 +136,12 @@ public class SimpleVideoStream extends Activity implements
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		Log.d(TAG, "onDestroy triggered.");
 		stop();
 	}
 
 	private void wrapItUp(int resultCode, String message) {
+		Log.d(TAG, "wrapItUp was triggered.");
 		Intent intent = new Intent();
 		intent.putExtra("message", message);
 		setResult(resultCode, intent);
@@ -148,6 +149,7 @@ public class SimpleVideoStream extends Activity implements
 	}
 
 	public void onCompletion(MediaPlayer mp) {
+		Log.d(TAG, "onCompletion triggered.");
 		stop();
 		if (mShouldAutoClose) {
 			wrapItUp(RESULT_OK, null);
@@ -159,18 +161,18 @@ public class SimpleVideoStream extends Activity implements
 		sb.append("MediaPlayer Error: ");
 		switch (what) {
 			case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-				sb.append("Not Valid for Progressive Playback");
-				break;
+			sb.append("Not Valid for Progressive Playback");
+			break;
 			case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-				sb.append("Server Died");
-				break;
+			sb.append("Server Died");
+			break;
 			case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-				sb.append("Unknown");
-				break;
+			sb.append("Unknown");
+			break;
 			default:
-				sb.append(" Non standard (");
-				sb.append(what);
-				sb.append(")");
+			sb.append(" Non standard (");
+			sb.append(what);
+			sb.append(")");
 		}
 		sb.append(" (" + what + ") ");
 		sb.append(extra);
